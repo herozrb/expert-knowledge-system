@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专家知识库系统架构</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        .architecture-container {
+            margin: 20px 0;
+            overflow-x: auto;
+            padding-bottom: 20px;
+        }
+        .architecture-diagram {
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            min-width: fit-content;
+        }
+        .system-node {
+            background-color: #2c6ecb;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 1.3rem;
+            font-weight: 600;
+            width: 220px;
+            margin: 0 auto 10px auto;
+        }
+        .modules-container {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 20px;
+        }
+        .module-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .module-node {
+            background-color: #eef4fd;
+            border: 2px solid #2c6ecb;
+            color: #2c6ecb;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 150px;
+            position: relative;
+            margin-bottom: 15px;
+        }
+        .module-node::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            width: 2px;
+            height: 15px;
+            background-color: #2c6ecb;
+            transform: translateX(-50%);
+        }
+        .pages-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+        .page-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .page-node {
+            background-color: white;
+            border: 1px solid #2c6ecb;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 120px;
+            position: relative;
+            margin-bottom: 10px;
+        }
+        .page-node::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            width: 1px;
+            height: 8px;
+            background-color: #2c6ecb;
+            transform: translateX(-50%);
+        }
+        .vertical-line {
+            width: 2px;
+            height: 15px;
+            background-color: #2c6ecb;
+            margin: 0 auto;
+        }
+        .screenshot-container {
+            width: 300px;
+            height: 170px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+        .screenshot-container:hover {
+            box-shadow: 0 4px 8px rgba(44, 110, 203, 0.4);
+        }
+        .screenshot-container:hover:after {
+            content: '点击放大';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(44, 110, 203, 0.8);
+            color: white;
+            padding: 3px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .screenshot {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+        .screenshot:hover {
+            transform: scale(1.02);
+        }
+        .page-title {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(44, 110, 203, 0.8);
+            color: white;
+            padding: 3px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .module-title {
+            color: #2c6ecb;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        /* Modal styles for enlarged images */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
+        }
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90vh;
+        }
+        .modal-caption {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+            text-align: center;
+            color: white;
+            padding: 10px 0;
+            font-weight: bold;
+        }
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+     <!--   <h1 class="my-3 text-center">专家知识库系统架构图</h1> -->
+        
+        <!-- Architecture Diagram with Integrated Screenshots -->
+        <div class="architecture-container">
+            <div class="architecture-diagram">
+                <div class="system-node">专家知识库系统</div>
+                <div class="vertical-line"></div>
+                
+                <div class="modules-container">
+                    <!-- 知识录入 Module -->
+                    <div class="module-column">
+                        <div class="module-node">
+                            <i class="fas fa-edit mb-1"></i><br>
+                            知识录入
+                        </div>
+                        <div class="vertical-line"></div>
+                        <div class="pages-container">
+                            <div class="page-block">
+                                <div class="page-node">对话标注</div>
+                                <div class="screenshot-container" onclick="openModal('对话标注.png', '对话标注')">
+                                    <img src="对话标注.png" alt="对话标注" class="screenshot">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 知识管理 Module -->
+                    <div class="module-column">
+                        <div class="module-node">
+                            <i class="fas fa-database mb-1"></i><br>
+                            知识管理
+                        </div>
+                        <div class="vertical-line"></div>
+                        <div class="pages-container">
+                            <div class="page-block">
+                                <div class="page-node">策略库</div>
+                                <div class="screenshot-container" onclick="openModal('专家策略.png', '专家策略库')">
+                                    <img src="专家策略.png" alt="专家策略库" class="screenshot">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 模型评测 Module -->
+                    <div class="module-column">
+                        <div class="module-node">
+                            <i class="fas fa-flask mb-1"></i><br>
+                            模型评测
+                        </div>
+                        <div class="vertical-line"></div>
+                        <div class="pages-container">
+                            <div class="page-block">
+                                <div class="page-node">对战界面</div>
+                                <div class="screenshot-container" onclick="openModal('对战界面.png', '对战界面')">
+                                    <img src="对战界面.png" alt="对战界面" class="screenshot">
+                                </div>
+                            </div>
+                            
+                            <div class="page-block">
+                                <div class="page-node">对战结果</div>
+                                <div class="screenshot-container" onclick="openModal('对战结果界面.png', '对战结果界面')">
+                                    <img src="对战结果界面.png" alt="对战结果界面" class="screenshot">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for enlarged images -->
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="enlargedImage">
+        <div id="caption" class="modal-caption"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Modal functionality for enlarged images
+        function openModal(imgSrc, imgCaption) {
+            var modal = document.getElementById("imageModal");
+            var modalImg = document.getElementById("enlargedImage");
+            var captionText = document.getElementById("caption");
+            
+            modal.style.display = "block";
+            modalImg.src = imgSrc;
+            captionText.innerHTML = imgCaption;
+        }
+
+        function closeModal() {
+            document.getElementById("imageModal").style.display = "none";
+        }
+
+        // Close the modal when clicking outside the image
+        window.onclick = function(event) {
+            var modal = document.getElementById("imageModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
