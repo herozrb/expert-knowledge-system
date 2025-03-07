@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专家知识库-策略管理</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c6ecb;
+            --primary-light: #eef4fd;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-bg: #f8f9fa;
+            --border-color: #e9ecef;
+            --text-primary: #333;
+            --text-secondary: #6c757d;
+            --text-muted: #999;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --anim-time: 0.2s;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: var(--text-primary);
+            min-width: 580px;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+        
+        /* 顶部导航栏 */
+        .header {
+            background-color: #fff;
+            color: var(--text-primary);
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .header-logo {
+            height: 28px;
+            margin-right: 12px;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info {
+            margin-right: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        /* 主容器 */
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 60px);
+            position: relative;
+        }
+        
+        /* 侧边栏 */
+        .sidebar {
+            width: 220px;
+            background-color: #fff;
+            border-right: 1px solid var(--border-color);
+            transition: width var(--anim-time);
+            position: sticky;
+            top: 60px;
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+            z-index: 100;
+        }
+        
+        .sidebar-collapsed {
+            width: 70px;
+        }
+        
+        .sidebar-toggle {
+            position: absolute;
+            right: -12px;
+            top: 20px;
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--anim-time);
+        }
+        
+        .sidebar-toggle:hover {
+            background-color: var(--light-bg);
+        }
+        
+        .sidebar-title {
+            padding: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-title i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            transition: background-color var(--anim-time);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .sidebar-menu a {
+            padding: 0.8rem 1rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: all var(--anim-time);
+        }
+        
+        .sidebar-menu a:hover {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+        }
+        
+        .sidebar-menu a.active {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .sidebar-menu i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .sidebar-menu .menu-text {
+            transition: opacity var(--anim-time);
+        }
+        
+        .sidebar-collapsed .sidebar-menu .menu-text {
+            opacity: 0;
+            display: none;
+        }
+        
+        /* 二级菜单样式 */
+        .sidebar-menu .has-submenu {
+            position: relative;
+        }
+        
+        .sidebar-menu .has-submenu .submenu-icon {
+            position: absolute;
+            right: 15px;
+            transition: transform 0.3s;
+        }
+        
+        .sidebar-menu .has-submenu.open .submenu-icon {
+            transform: rotate(90deg);
+        }
+        
+        .sidebar-menu .submenu {
+            list-style: none;
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #f9f9f9;
+        }
+        
+        .sidebar-menu .has-submenu.open .submenu {
+            max-height: 500px;
+            transition: max-height 0.5s ease-in;
+        }
+        
+        .sidebar-menu .submenu li {
+            border-bottom: none;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .sidebar-menu .submenu a {
+            padding-left: 3rem;
+            font-size: 0.9rem;
+        }
+        
+        .sidebar-menu .submenu a.active {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .sidebar-collapsed .sidebar-menu .submenu {
+            display: none;
+        }
+        
+        /* 内容区域 */
+        .content {
+            flex: 1;
+            padding: 1.5rem;
+            transition: margin 0.3s ease;
+        }
+        
+        /* 卡片样式 */
+        .card {
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-shadow: var(--shadow-sm);
+            background-color: #fff;
+        }
+        
+        .card-header {
+            background-color: #fff;
+            padding: 12px 16px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-header i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+
+        /* 表格样式 */
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            padding: 10px 16px;
+            border-top: none;
+        }
+        
+        .table td {
+            padding: 10px 16px;
+            vertical-align: middle;
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: rgba(44, 110, 203, 0.05);
+        }
+        
+        /* 辅助样式 */
+        .badge {
+            padding: 5px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+        
+        .badge-success {
+            background-color: #e6f7ed;
+            color: #28a745;
+        }
+        
+        .badge-warning {
+            background-color: #fff8e6;
+            color: #f5a623;
+        }
+        
+        .badge-danger {
+            background-color: #fbe7e7;
+            color: #dc3545;
+        }
+        
+        .badge-info {
+            background-color: #e6f3f7;
+            color: #17a2b8;
+        }
+
+        /* 策略页面特有样式 */
+        .best-strategy-card {
+            background-color: #fffbeb;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .best-strategy-content {
+            padding: 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .ranking-cards {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .ranking-card {
+            flex: 1;
+            min-width: 250px;
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+        
+        .ranking-card-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 16px;
+            font-weight: 600;
+        }
+        
+        .ranking-list {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        
+        .ranking-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .ranking-item:last-child {
+            border-bottom: none;
+        }
+        
+        .ranking-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-right: 10px;
+        }
+        
+        .ranking-item-1 .ranking-number {
+            background-color: #ffd700;
+            color: #333;
+        }
+        
+        .ranking-item-2 .ranking-number {
+            background-color: #c0c0c0;
+            color: #333;
+        }
+        
+        .ranking-item-3 .ranking-number {
+            background-color: #cd7f32;
+            color: #fff;
+        }
+        
+        .ranking-title {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .ranking-value {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        /* 进度条样式 */
+        .progress-slim {
+            height: 6px;
+            margin-top: 4px;
+            margin-bottom: 0;
+            border-radius: 3px;
+            overflow: hidden;
+            background-color: #e9ecef;
+        }
+        
+        .progress-slim .progress-bar {
+            background-color: var(--primary-color);
+        }
+        
+        /* 简单图表样式 */
+        .simple-chart {
+            height: 150px;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            padding: 10px;
+        }
+        
+        .chart-bar {
+            flex: 1;
+            background-color: var(--primary-light);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            min-width: 30px;
+            transition: height 0.5s ease;
+        }
+        
+        .chart-bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .chart-bar-value {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="header-title">
+            专家知识库 - 策略管理
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span>标注员A</span>
+            </div>
+            <button class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-sign-out-alt mr-1"></i>退出
+            </button>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <!-- 左侧菜单 -->
+        <aside class="sidebar">
+            <div class="sidebar-toggle">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+            <div class="sidebar-title">
+                <i class="fas fa-th-list"></i>专家知识库
+            </div>
+            <ul class="sidebar-menu">
+                <li class="has-submenu">
+                    <a href="javascript:void(0);">
+                        <i class="fas fa-edit"></i>
+                        <span class="menu-text">知识录入</span>
+                        <i class="fas fa-chevron-right submenu-icon"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li>
+                            <a href="../Knowledge_Entry/对话标注.html">
+                                <span class="menu-text">对话标注</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="has-submenu open">
+                    <a href="javascript:void(0);">
+                        <i class="fas fa-database"></i>
+                        <span class="menu-text">知识管理</span>
+                        <i class="fas fa-chevron-right submenu-icon"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li>
+                            <a href="专家策略.html" class="active">
+                                <span class="menu-text">专家策略库</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="javascript:void(0);">
+                        <i class="fas fa-flask"></i>
+                        <span class="menu-text">模型评测</span>
+                        <i class="fas fa-chevron-right submenu-icon"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li>
+                            <a href="../Model_Evaluation/对战界面.html">
+                                <span class="menu-text">对战界面</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../Model_Evaluation/对战数据创建界面.html">
+                                <span class="menu-text">对战数据创建</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../Model_Evaluation/对战结果界面.html">
+                                <span class="menu-text">对战结果界面</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </aside>
+        
+        <!-- 主内容区 -->
+        <div class="content">
+            <!-- 标题栏 -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0"><i class="fas fa-cogs text-primary mr-2"></i>策略管理中心</h4>
+            </div>
+            
+            <!-- 排行榜部分 -->
+            <div class="row mb-4">
+                <!-- 策略使用排行榜 -->
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-header bg-white border-bottom-0 pb-0">
+                            <h5 class="mb-0"><i class="fas fa-star text-warning mr-2"></i>策略使用排行榜</h5>
+                        </div>
+                        <div class="card-body pt-3">
+                            <table class="table table-hover mb-0">
+                                <tr class="border-left border-primary" style="border-left-width: 3px !important;">
+                                    <td>因客户首借逾通且失联状态</td>
+                                    <td>重视信用记录/家庭声誉损坏</td>
+                                    <td>户籍核实+司法施压组合</td>
+                                </tr>
+                                <tr class="border-left border-primary" style="border-left-width: 3px !important;">
+                                    <td>因用户年轻且逾期沟通</td>
+                                    <td>恐惧法律后果/在意声誉</td>
+                                    <td>征信施压+条件升级策略</td>
+                                </tr>
+                                <tr class="border-left border-primary" style="border-left-width: 3px !important;">
+                                    <td>因客户多次虚假承诺还款</td>
+                                    <td>对催收厌烦/还款能力不足</td>
+                                    <td>跟催话术+取消分期措施</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 策略创建者排行榜 -->
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-header bg-white border-bottom-0 pb-0">
+                            <h5 class="mb-0"><i class="fas fa-trophy text-warning mr-2"></i>策略创建者排行榜</h5>
+                        </div>
+                        <div class="card-body pt-3">
+                            <div class="mb-3 py-2 px-3 rounded" style="background-color: var(--primary-light);">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mr-3" style="width: 36px; height: 36px;">
+                                        <i class="fas fa-crown"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">专家--zhangke</h6>
+                                        <small class="text-muted">32个高效策略 | 平均回收率89%</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3 py-2 px-3 rounded" style="background-color: #f8f9fa;">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center mr-3" style="width: 36px; height: 36px;">
+                                        <i class="fas fa-robot"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">模型--deepseek-r1</h6>
+                                        <small class="text-muted">28个高效策略 | 平均回收率76%</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="py-2 px-3 rounded" style="background-color: #f8f9fa;">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center mr-3" style="width: 36px; height: 36px;">
+                                        <i class="fas fa-user-tie"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">专家--zhangke</h6>
+                                        <small class="text-muted">25个高效策略 | 平均回收率72%</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 策略表格 -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-list text-primary mr-2"></i>策略数据表</h5>
+                    <div>
+                        <button class="btn btn-sm btn-outline-primary mr-2">
+                            <i class="fas fa-filter mr-1"></i>筛选
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-download mr-1"></i>导出
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr style="background-color: #f8f9fa;">
+                                <th>策略逻辑</th>
+                                <th>用户软肋</th>
+                                <th>使用策略</th>
+                                <th>策略创建者</th>
+                                <th>模型使用量</th>
+                                <th>当日回收率</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>因用户有良好还款记录但当下资金较小</td>
+                                <td>不想陌生人知晓债务/无法承担违约压力</td>
+                                <td>通知熟人施压+取消分期减免策略</td>
+                                <td><span class="badge badge-primary">专家--zhangke</span></td>
+                                <td>123</td>
+                                <td><span class="badge badge-success">20.23%</span></td>
+                            </tr>
+                            <tr>
+                                <td>因客户首次逾期且失联状态</td>
+                                <td>重视信用记录/配偶声誉损坏</td>
+                                <td>户籍核实+司法施压组合</td>
+                                <td><span class="badge badge-primary">专家--zhangke</span></td>
+                                <td>12232</td>
+                                <td><span class="badge badge-success">20.23%</span></td>
+                            </tr>
+                            <tr>
+                                <td>因用户年轻且逾期沟通</td>
+                                <td>恐惧法律后果/在意声誉</td>
+                                <td>征信施压+条件升级策略</td>
+                                <td><span class="badge badge-primary">专家--zhangke</span></td>
+                                <td>1231</td>
+                                <td><span class="badge badge-success">23%</span></td>
+                            </tr>
+                            <tr>
+                                <td>因客户多次虚假承诺还款</td>
+                                <td>对催收厌烦/还款能力不足</td>
+                                <td>跟催技术+取消分期推施</td>
+                                <td><span class="badge badge-info">模型--deepseek-r1</span></td>
+                                <td>323</td>
+                                <td><span class="badge badge-warning">45%</span></td>
+                            </tr>
+                            <tr>
+                                <td>因逾期时间超过10天</td>
+                                <td>担心流程升级/信用受损</td>
+                                <td>案件升级+合同条款施压</td>
+                                <td><span class="badge badge-primary">专家--zhangke</span></td>
+                                <td>565</td>
+                                <td><span class="badge badge-danger">90%</span></td>
+                            </tr>
+                            <tr>
+                                <td>因客户资质良好但还款异常</td>
+                                <td>工作影响担忧/周转困难</td>
+                                <td>单位核实+熟人通知策略</td>
+                                <td><span class="badge badge-primary">专家--zhangke</span></td>
+                                <td>34</td>
+                                <td><span class="badge badge-danger">123%</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer bg-white">
+                    <nav>
+                        <ul class="pagination justify-content-end mb-0">
+                            <li class="page-item disabled"><a class="page-link" href="#">上一页</a></li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">下一页</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JS依赖 -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // 侧边栏折叠/展开
+            $('.sidebar-toggle').click(function() {
+                $('.sidebar').toggleClass('sidebar-collapsed');
+                $(this).find('i').toggleClass('fa-chevron-left fa-chevron-right');
+            });
+            
+            // 侧边栏子菜单展开/折叠
+            $('.has-submenu > a').click(function(e) {
+                e.preventDefault();
+                $(this).parent('.has-submenu').toggleClass('open');
+            });
+            
+            // 表格行悬停效果
+            $('.table tbody tr').hover(
+                function() { $(this).css('background-color', 'rgba(44, 110, 203, 0.05)'); },
+                function() { $(this).css('background-color', ''); }
+            );
+        });
+    </script>
+</body>
+</html>

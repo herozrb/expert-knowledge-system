@@ -1,0 +1,131 @@
+<svg width="900" height="700" xmlns="http://www.w3.org/2000/svg">
+    <!-- 样式定义 -->
+    <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#333" />
+        </marker>
+        <filter id="softShadow" x="-2" y="-2" width="104%" height="104%">
+            <feOffset result="offOut" in="SourceAlpha" dx="1" dy="1" />
+            <feGaussianBlur result="blurOut" in="offOut" stdDeviation="1" />
+            <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+        </filter>
+    </defs>
+
+    <!-- 背景 -->
+    <rect x="0" y="0" width="900" height="700" fill="#f9f9f9" />
+    
+    <!-- 标题 -->
+    <rect x="50" y="20" width="800" height="60" rx="5" ry="5" fill="#f5f5f5" stroke="#333333" stroke-width="2" filter="url(#softShadow)" />
+    <text x="450" y="60" font-family="Arial" font-size="24" fill="#333333" text-anchor="middle" font-weight="bold">模型对抗评估系统工作流程</text>
+
+    <!-- 阶段标题 -->
+    <rect x="50" y="100" width="160" height="40" rx="5" ry="5" fill="#e6f7ff" stroke="#333333" stroke-width="1" />
+    <rect x="210" y="100" width="160" height="40" rx="5" ry="5" fill="#e6f5e6" stroke="#333333" stroke-width="1" />
+    <rect x="370" y="100" width="160" height="40" rx="5" ry="5" fill="#fff2e6" stroke="#333333" stroke-width="1" />
+    <rect x="530" y="100" width="160" height="40" rx="5" ry="5" fill="#f9e6ff" stroke="#333333" stroke-width="1" />
+    <rect x="690" y="100" width="160" height="40" rx="5" ry="5" fill="#ffe6e6" stroke="#333333" stroke-width="1" />
+    
+    <text x="130" y="125" font-family="Arial" font-size="16" fill="#333333" text-anchor="middle" font-weight="bold">数据准备</text>
+    <text x="290" y="125" font-family="Arial" font-size="16" fill="#333333" text-anchor="middle" font-weight="bold">任务发布</text>
+    <text x="450" y="125" font-family="Arial" font-size="16" fill="#333333" text-anchor="middle" font-weight="bold">模型执行</text>
+    <text x="610" y="125" font-family="Arial" font-size="16" fill="#333333" text-anchor="middle" font-weight="bold">结果获取</text>
+    <text x="770" y="125" font-family="Arial" font-size="16" fill="#333333" text-anchor="middle" font-weight="bold">价值计算</text>
+
+    <!-- 主要流程图 -->
+    
+    <!-- 第一阶段：数据准备 -->
+    <rect x="50" y="160" width="160" height="80" rx="5" ry="5" fill="#e6f7ff" stroke="#333333" stroke-width="2" filter="url(#softShadow)" />
+    <text x="130" y="195" font-family="Arial" font-size="14" fill="#333333" text-anchor="middle" font-weight="bold">数据标注团队</text>
+    <text x="130" y="215" font-family="Arial" font-size="12" fill="#333333" text-anchor="middle">原始数据采集和标注</text>
+    
+    <rect x="50" y="260" width="160" height="80" rx="5" ry="5" fill="#f0f7ff" stroke="#333333" stroke-width="2" filter="url(#softShadow)" />
+    <text x="130" y="295" font-family="Arial" font-size="14" fill="#333333" text-anchor="middle" font-style="italic">ETL系统</text>
+    <text x="130" y="315" font-family="Arial" font-size="12" fill="#333333" text-anchor="middle">数据清洗/特征工程</text>
+    
+    <!-- 第二阶段：任务发布 -->
+    <rect x="210" y="160" width="160" height="80" rx="5" ry="5" fill="#e6f5e6" stroke="#333333" stroke-width="2" filter="url(#softShadow)" />
+    <text x="290" y="195" font-family="Arial" font-size="14" fill="#333333" text-anchor="middle" font-weight="bold">算法工程师</text>
+    <text x="290" y="215" font-family="Arial" font-size="12" fill="#333333" text-anchor="middle">选择对战模型版本</text>
+    
+    <rect x="210" y="260" width="160" height="80" rx="5" ry="5" fill="#f0f7f0" stroke="#333333" stroke-width="2" filter="url(#softShadow)" />
+    <text x="290" y="295" font-family="Arial" font-size="14" fill="#333333" text-anchor="middle" font-style="italic">超参优化系统</text>
+    <text x="290" y="315" font-family="Arial" font-size="12" fill="#333333" text-anchor="middle">自动配置对抗参数</text>
+    
+    <!-- 第三阶段：模型执行 -->
+    <rect x="370" y="160" width="160" height="80" rx="5" ry="5" fill="#fff2e6" stroke="#333333" stroke-width="2" filter="url(#softShadow)" />
+    <text x="450" y="195" font-family="Arial" font-size="14" fill="#333333" text-anchor="middle" font-style="italic">K8s集群</text>
+    <text x="450" y="215" font-family="Arial" font-size="12" fill="#333333" text-anchor="middle">资源调度和分布式计算</text>
+    
+    <rect x="370" y="260" width="160" height="80" rx="5" ry="5" fill="#fff7f0" stroke="#333333" stroke-width="2" filter="url(#softShadow)" />
+    <text x="450" y="295" font-family="Arial" font-size="14" fill="#333333" text-anchor="middle" font-style="italic">推理引擎</text>
+    <text x="450" y="315" font-family="Arial" font-size="12" fill="#333333" text-anchor="middle">执行模型间的对抗推理</text>
+    
+    <!-- 第四阶段：结果获取 -->
+    <rect x="530" y="160" width="160" height="80" rx="5" ry="5" fill="#f9e6ff" stroke="#333333" stroke-width="2" filter="url(#softShadow)" />
+    <text x="610" y="195" font-family="Arial" font-size="14" fill="#333333" text-anchor="middle" font-style="italic">日志分析系统</text>
+    <text x="610" y="215" font-family="Arial" font-size="12" fill="#333333" text-anchor="middle">实时解析对抗日志</text>
+    
+    <rect x="530" y="260" width="160" height="80" rx="5" ry="5" fill="#f7f0ff" stroke="#333333" stroke-width="2" filter="url(#softShadow)" />
+    <text x="610" y="295" font-family="Arial" font-size="14" fill="#333333" text-anchor="middle" font-weight="bold">DBA</text>
+    <text x="610" y="315" font-family="Arial" font-size="12" fill="#333333" text-anchor="middle">将结构化结果存入数据库</text>
+    
+    <!-- 第五阶段：价值计算 -->
+    <rect x="690" y="160" width="160" height="80" rx="5" ry="5" fill="#ffe6e6" stroke="#333333" stroke-width="2" filter="url(#softShadow)" />
+    <text x="770" y="195" font-family="Arial" font-size="14" fill="#333333" text-anchor="middle" font-style="italic">统计模型</text>
+    <text x="770" y="215" font-family="Arial" font-size="12" fill="#333333" text-anchor="middle">计算胜率/置信区间</text>
+    
+    <rect x="690" y="260" width="160" height="80" rx="5" ry="5" fill="#fff0f0" stroke="#333333" stroke-width="2" filter="url(#softShadow)" />
+    <text x="770" y="295" font-family="Arial" font-size="14" fill="#333333" text-anchor="middle" font-style="italic">评估矩阵</text>
+    <text x="770" y="315" font-family="Arial" font-size="12" fill="#333333" text-anchor="middle">综合时延/资源消耗等维度</text>
+    
+    <!-- 第六阶段：报告生成 - 修复红框区域 -->
+    <rect x="370" y="360" width="160" height="40" rx="5" ry="5" fill="#f0f0f0" stroke="#333333" stroke-width="1" />
+    <text x="450" y="385" font-family="Arial" font-size="16" fill="#333333" text-anchor="middle" font-weight="bold">报告生成</text>
+    
+    <rect x="370" y="410" width="160" height="80" rx="5" ry="5" fill="#e6e6ff" stroke="#333333" stroke-width="2" filter="url(#softShadow)" />
+    <text x="450" y="445" font-family="Arial" font-size="14" fill="#333333" text-anchor="middle" font-style="italic">BI系统</text>
+    <text x="450" y="465" font-family="Arial" font-size="12" fill="#333333" text-anchor="middle">自动生成可视化看板</text>
+    
+    <rect x="370" y="510" width="160" height="80" rx="5" ry="5" fill="#f5f5f5" stroke="#333333" stroke-width="2" filter="url(#softShadow)" />
+    <text x="450" y="545" font-family="Arial" font-size="14" fill="#333333" text-anchor="middle" font-weight="bold">技术委员会</text>
+    <text x="450" y="565" font-family="Arial" font-size="12" fill="#333333" text-anchor="middle">最终评估结论确认</text>
+    
+    <!-- 连接线 -->
+    <!-- 阶段1内连接 -->
+    <line x1="130" y1="240" x2="130" y2="260" stroke="#5c8eb8" stroke-width="2" marker-end="url(#arrow)" />
+    
+    <!-- 阶段2内连接 -->
+    <line x1="290" y1="240" x2="290" y2="260" stroke="#5cb85c" stroke-width="2" marker-end="url(#arrow)" />
+    
+    <!-- 阶段3内连接 -->
+    <line x1="450" y1="240" x2="450" y2="260" stroke="#f0ad4e" stroke-width="2" marker-end="url(#arrow)" />
+    
+    <!-- 阶段4内连接 -->
+    <line x1="610" y1="240" x2="610" y2="260" stroke="#9966cc" stroke-width="2" marker-end="url(#arrow)" />
+    
+    <!-- 阶段5内连接 -->
+    <line x1="770" y1="240" x2="770" y2="260" stroke="#d9534f" stroke-width="2" marker-end="url(#arrow)" />
+
+    <!-- 阶段间连接 -->
+    <path d="M 210 200 L 370 200" stroke="#5cb85c" stroke-width="2" marker-end="url(#arrow)" />
+    <path d="M 530 200 L 690 200" stroke="#9966cc" stroke-width="2" marker-end="url(#arrow)" />
+
+    <!-- 最后连接到报告生成 -->
+    <path d="M 770 340 L 770 380 L 530 380" stroke="#d9534f" stroke-width="2" marker-end="url(#arrow)" />
+    
+    <!-- 报告内连接 -->
+    <line x1="450" y1="490" x2="450" y2="510" stroke="#5c8eb8" stroke-width="2" marker-end="url(#arrow)" />
+    
+    <!-- 图例 -->
+    <rect x="50" y="620" width="20" height="20" fill="#f5f5f5" stroke="#333333" stroke-width="1" />
+    <text x="80" y="635" font-family="Arial" font-size="14" fill="#333333" font-weight="bold">人工干预</text>
+    
+    <rect x="200" y="620" width="20" height="20" fill="#f0f7ff" stroke="#333333" stroke-width="1" />
+    <text x="230" y="635" font-family="Arial" font-size="14" fill="#333333" font-style="italic">自动化系统</text>
+    
+    <!-- 设计特点说明 -->
+    <rect x="50" y="650" width="800" height="30" rx="5" ry="5" fill="#f5f5f5" stroke="#333333" stroke-width="1" />
+    <text x="450" y="670" font-family="Arial" font-size="12" fill="#333333" text-anchor="middle">
+        设计特点：人机协同模式，关键节点保留人工审核，责任追溯链条完整，支持横向扩展
+    </text>
+</svg>

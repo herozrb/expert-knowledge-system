@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能催收标注系统</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c6ecb;
+            --primary-light: #eef4fd;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-bg: #f8f9fa;
+            --border-color: #e9ecef;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background-color: white;
+            box-shadow: var(--shadow-sm);
+            padding: 12px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .container-fluid {
+            padding: 20px;
+        }
+        
+        .card {
+            margin-bottom: 20px;
+            border-radius: 6px;
+            box-shadow: var(--shadow-sm);
+            border: none;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-header i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        
+        .card-header .badge {
+            font-size: 12px;
+            font-weight: normal;
+            margin-left: 10px;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-label {
+            font-size: 13px;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-weight: 500;
+        }
+        
+        .nav-tabs {
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 15px;
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            color: var(--text-secondary);
+            padding: 10px 15px;
+            position: relative;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            background-color: transparent;
+            font-weight: 600;
+        }
+        
+        .nav-tabs .nav-link.active:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 15px;
+            right: 15px;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .tab-content {
+            padding: 20px 15px;
+        }
+        
+        .analysis-block {
+            margin-bottom: 20px;
+        }
+        
+        .analysis-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+        }
+        
+        .analysis-title i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+        
+        .analysis-content {
+            background-color: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .strategy-item {
+            padding: 12px 15px;
+            border-radius: 6px;
+            background-color: white;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--border-color);
+        }
+        
+        .strategy-item.good {
+            border-left-color: var(--success-color);
+        }
+        
+        .strategy-item.bad {
+            border-left-color: var(--danger-color);
+        }
+        
+        .strategy-label {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        
+        .strategy-label.good {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+        
+        .strategy-label.bad {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .strategy-reason {
+            margin-top: 5px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .conversation-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .conversation-item {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .conversation-item.customer {
+            padding-right: 20%;
+        }
+        
+        .conversation-item.agent {
+            padding-left: 20%;
+        }
+        
+        .message-header {
+            margin-bottom: 5px;
+        }
+        
+        .role-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        
+        .role-badge.customer {
+            background-color: var(--light-bg);
+            color: var(--secondary-color);
+        }
+        
+        .role-badge.agent {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+        }
+        
+        .message-bubble {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            padding: 15px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .message-content {
+            margin-bottom: 10px;
+        }
+        
+        .message-cot {
+            font-size: 13px;
+            color: var(--secondary-color);
+            padding: 10px;
+            background-color: var(--light-bg);
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        
+        .annotation-form {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border-color);
+        }
+        
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        .annotation-badge {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background-color: var(--info-color);
+            color: white;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            z-index: 1;
+        }
+        
+        .annotation-badge.completed {
+            background-color: var(--success-color);
+        }
+        
+        .annotation-badge.pending {
+            background-color: var(--warning-color);
+        }
+        
+        .reason-label {
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .reason-label.good {
+            color: var(--success-color);
+        }
+        
+        .reason-label.bad {
+            color: var(--danger-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-title">
+            <i class="fas fa-headset text-primary"></i> 智能催收标注系统
+        </div>
+    </div>
+    
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-info-circle"></i> 案例基本信息
+                <span class="badge badge-primary">案例编号: 20250120190500613736-173320_01</span>
+            </div>
+            <div class="card-body">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">通话ID</div>
+                        <div class="info-value">20250120190500613736-173320</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">账单ID</div>
+                        <div class="info-value">1868713552845045809</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">客户编号</div>
+                        <div class="info-value">1000000297200260</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">负债人ID</div>
+                        <div class="info-value">1868713552324763678</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-clipboard-list"></i> 案例分析与标注
+            </div>
+            <div class="card-body p-0">
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <a class="nav-link active" id="nav-analysis-tab" data-toggle="tab" href="#nav-analysis" role="tab">案例分析</a>
+                        <a class="nav-link" id="nav-conversation-tab" data-toggle="tab" href="#nav-conversation" role="tab">对话标注</a>
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-analysis" role="tabpanel">
+                        <div class="analysis-block">
+                            <div class="analysis-title">
+                                <i class="fas fa-search"></i> 综合分析
+                            </div>
+                            <div class="analysis-content">
+                                用户是26岁年轻人，有一定还款能力但需要施加压力。历史还款记录显示用户有部分还款行为但金额不稳定，说明存在还款意愿但资金管理能力不足。历史催收记录显示用户多次提及通讯录被爆问题，对催收手段敏感。工单信息无投诉记录，说明用户尚未采取正式投诉途径。逾期金额1069.73元结合剩余本金3156.46元，需强调及时处理避免利息累积。
+                            </div>
+                        </div>
+                        
+                        <div class="analysis-block">
+                            <div class="analysis-title">
+                                <i class="fas fa-lightbulb"></i> 催收策略分析
+                            </div>
+                            <div class="strategy-item good">
+                                <div class="strategy-label good">好</div>
+                                <div>我从案件的年龄信息里提取到了欠款用户的年轻群体特征，所以这一通我要用'短期压力+未来影响'的话术策略</div>
+                            </div>
+                            
+                            <div class="strategy-item good">
+                                <div class="strategy-label good">好</div>
+                                <div>我从历史还款记录里提取到了用户有零散还款行为，所以这一通我要用'肯定还款意愿+强调金额可控性'的应对策略</div>
+                            </div>
+                            
+                            <div class="strategy-item bad">
+                                <div class="strategy-label bad">不好</div>
+                                <div>我从历史催收记录里提取到了用户对爆通讯录的强烈抵触，所以这一通我要避免施压手段转而使用'共情+法律流程告知'策略</div>
+                                <div class="strategy-reason">原因：不符合作业逻辑</div>
+                            </div>
+                            
+                            <div class="strategy-item bad">
+                                <div class="strategy-label bad">不好</div>
+                                <div>我从剩余本金信息里提取到了债务规模较小的特点，所以这一通我要用'化整为零+优先处理'的话术技巧</div>
+                                <div class="strategy-reason">原因：不符合作业逻辑</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="nav-conversation" role="tabpanel">
+                        <ul class="conversation-list">
+                            <!-- 对话1 -->
+                            <li class="conversation-item customer">
+                                <div class="message-header">
+                                    <span class="role-badge customer">客户</span>
+                                </div>
+                                <div class="message-bubble">
+                                    <div class="message-content">喂。</div>
+                                    <div class="message-cot">
+                                        <strong>思维链分析：</strong>无
+                                    </div>
+                                </div>
+                            </li>
+                            
+                            <!-- 对话2 -->
+                            <li class="conversation-item agent">
+                                <div class="message-header">
+                                    <span class="role-badge agent">坐席</span>
+                                </div>
+                                <div class="message-bubble">
+                                    <div class="message-content">喂你好。</div>
+                                    <div class="message-cot">
+                                        <strong>思维链分析：</strong>无
+                                    </div>
+                                </div>
+                            </li>
+                            
+                            <!-- 对话3 -->
+                            <li class="conversation-item customer">
+                                <div class="message-header">
+                                    <span class="role-badge customer">客户</span>
+                                </div>
+                                <div class="message-bubble">
+                                    <div class="message-content">哪位？</div>
+                                    <div class="message-cot">
+                                        <strong>思维链分析：</strong>无
+                                    </div>
+                                </div>
+                            </li>
+                            
+                            <!-- 对话4 -->
+                            <li class="conversation-item agent">
+                                <div class="message-header">
+                                    <span class="role-badge agent">坐席</span>
+                                </div>
+                                <div class="message-bubble">
+                                    <div class="message-content">你好。</div>
+                                    <div class="message-cot">
+                                        <strong>思维链分析：</strong>无
+                                    </div>
+                                </div>
+                            </li>
+                            
+                            <!-- 对话5 -->
+                            <li class="conversation-item customer">
+                                <div class="message-header">
+                                    <span class="role-badge customer">客户</span>
+                                </div>
+                                <div class="message-bubble">
+                                    <div class="message-content">喂。</div>
+                                    <div class="message-cot">
+                                        <strong>思维链分析：</strong>无
+                                    </div>
+                                </div>
+                            </li>
+                            
+                            <!-- 对话6 -->
+                            <li class="conversation-item agent">
+                                <div class="message-header">
+                                    <span class="role-badge agent">坐席</span>
+                                </div>
+                                <div class="message-bubble">
+                                    <div class="message-content">你好，杨欣欣是吗？</div>
+                                    <div class="message-cot">
+                                        <strong>思维链分析：</strong>用户接听迟疑，需要先确认身份避免误触第三方
+                                    </div>
+                                </div>
+                            </li>
+                            
+                            <!-- 对话7 -->
+                            <li class="conversation-item customer">
+                                <div class="message-header">
+                                    <span class="role-badge customer">客户</span>
+                                </div>
+                                <div class="message-bubble">
+                                    <div class="message-content">哪位呀？说话呀。</div>
+                                    <div class="message-cot">
+                                        <strong>思维链分析：</strong>无
+                                    </div>
+                                </div>
+                            </li>
+                            
+                            <!-- 对话8 -->
+                            <li class="conversation-item agent">
+                                <div class="message-header">
+                                    <span class="role-badge agent">坐席</span>
+                                </div>
+                                <div class="message-bubble">
+                                    <div class="message-content">听不到吗先生？</div>
+                                    <div class="message-cot">
+                                        <strong>思维链分析：</strong>无
+                                    </div>
+                                </div>
+                            </li>
+                            
+                            <!-- 对话9 -->
+                            <li class="conversation-item customer">
+                                <div class="message-header">
+                                    <span class="role-badge customer">客户</span>
+                                </div>
+                                <div class="message-bubble">
+                                    <div class="message-content">哦可以了。</div>
+                                    <div class="message-cot">
+                                        <strong>思维链分析：</strong>无
+                                    </div>
+                                </div>
+                            </li>
+                            
+                            <!-- 对话10 - 待标注 -->
+                            <li class="conversation-item agent">
+                                <span class="annotation-badge pending">待标注</span>
+                                <div class="message-header">
+                                    <span class="role-badge agent">坐席</span>
+                                </div>
+                                <div class="message-bubble">
+                                    <div class="message-content">呃您是杨欣欣是吧？哎先生，您的这个美团金融的金融业务呀，您这边怎么还了个几十块钱，到现在就没有处理了呀。</div>
+                                    <div class="message-cot">
+                                        <strong>思维链分析：</strong>用具体还款数据建立专业形象，同时暗示还款行为的不连贯性
+                                    </div>
+                                    <div class="annotation-form">
+                                        <div class="form-label">请选择该轮理由是否合理：</div>
+                                        <div class="btn-group btn-group-sm mb-3" role="group">
+                                            <button type="button" class="btn btn-outline-success">好</button>
+                                            <button type="button" class="btn btn-outline-danger">不好</button>
+                                        </div>
+                                        <div class="form-group">
+                                            <textarea class="form-control form-control-sm" rows="2" placeholder="如选择"不好"，请输入原因说明..."></textarea>
+                                        </div>
+                                        <button class="btn btn-primary btn-sm">提交标注</button>
+                                    </div>
+                                </div>
+                            </li>
+                            
+                            <!-- 对话11 -->
+                            <li class="conversation-item customer">
+                                <div class="message-header">
+                                    <span class="role-badge customer">客户</span>
+                                </div>
+                                <div class="message-bubble">
+                                    <div class="message-content">对。</div>
+                                    <div class="message-cot">
+                                        <strong>思维链分析：</strong>无
+                                    </div>
+                                </div>
+                            </li>
+                            
+                            <!-- 对话12 -->
+                            <li class="conversation-item customer">
+                                <div class="message-header">
+                                    <span class="role-badge customer">客户</span>
+                                </div>
+                                <div class="message-bubble">
+                                    <div class="message-content">没钱啊。</div>
+                                    <div class="message-cot">
+                                        <strong>思维链分析：</strong>无
+                                    </div>
+                                </div>
+                            </li>
+                            
+                            <!-- 对话13 - 已标注 -->
+                            <li class="conversation-item agent">
+                                <span class="annotation-badge completed">已标注</span>
+                                <div class="message-header">
+                                    <span class="role-badge agent">坐席</span>
+                                </div>
+                                <div class="message-bubble">
+                                    <div class="message-content">不行啊，先生您这再没钱，你说几百块钱是吧？不至于啊，你也又不是说没有还款意愿对不对？</div>
+                                    <div class="message-cot">
+                                        <strong>思维链分析：</strong>用户强调经济困难时，采用'金额最小化+肯定还款意愿'的组合策略
+                                    </div>
+                                    <div class="mt-3 p-2" style="background-color: rgba(40, 167, 69, 0.05); border-radius: 4px;">
+                                        <div class="reason-label good">好</div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <!-- 后续对话可以继续添加... -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
